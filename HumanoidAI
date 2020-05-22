@@ -1,0 +1,50 @@
+--AI Example that I created for the player's game.Players.LocalPlayer.Character.Humanoid
+local player = game:GetService("Players").LocalPlayer
+local human = player.Character.Humanoid
+local playerpos = player.Character.Head.Position
+local mouse = game:GetService("Players").LocalPlayer:GetMouse()
+
+game:GetService("RunService").RenderStepped:Connect(function()
+local endpoint = game.Workspace:FindFirstChild("endpoint")
+end)
+
+mouse.KeyDown:connect(function(key)
+    if key == "e" then
+            local lastpoint = Instance.new("Part",workspace)
+            lastpoint.Anchored = true
+            lastpoint.CanCollide = false
+            lastpoint.CFrame = mouse.Hit
+            lastpoint.Size = Vector3.new(1,1,1)
+            lastpoint.Name = "endpoint"
+    end
+wait(0.1)
+    if endpoint then
+    print("endpoint")
+        local path = game:GetService("PathfindingService"):FindPathAsync(playerpos,endpoint)
+        local points = path:GetWaypoints()
+        if path then
+        print("path")
+    for i,v in pairs(points) do
+        local z = Instance.new("Part",workspace)
+        z.Anchored = true
+        z.CanCollide = false
+        z.CFrame = CFrame.new(v.Position)
+        z.Size = Vector3.new(1,1,1)
+        z.Name = "PointPath"
+    end
+    print("points")
+end
+wait(0.1)
+if path.Status == Enum.PathStatus.Success then
+    print("walking")
+    for i,v in pairs(points) do
+        human:MoveTo(v.Position)
+        human.MoveToFinished:wait()
+        if v.Action == Enum.PathWaypointAction.Jump then
+            human.Jump = true
+        end
+    end
+end
+end
+end)
+print("ending")
